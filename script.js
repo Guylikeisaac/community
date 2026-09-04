@@ -8,43 +8,50 @@ const communities = [
     number: "01",
     abbreviation: "TA",
     name: "Talent Acquisition",
-    description: "For recruiters, talent acquisition professionals and people working across hiring."
+    description: "For recruiters, talent acquisition professionals and people working across hiring.",
+    link: "https://chat.whatsapp.com/BePLWJnBxUN6btKouNA3is?mode=gi_t"
   },
   {
     number: "02",
     abbreviation: "SDE",
     name: "Software Development",
-    description: "For software developers, engineers and people building digital products."
+    description: "For software developers, engineers and people building digital products.",
+    link: "https://chat.whatsapp.com/D68qlLyjIPY10hOgXLvOxn?mode=gi_t"
   },
   {
     number: "03",
     abbreviation: "DATA",
     name: "Data",
-    description: "For professionals working across data, analytics and data engineering."
+    description: "For professionals working across data, analytics and data engineering.",
+    link: "https://chat.whatsapp.com/IKfbKsinjAH11aFZTg1Na9?mode=gi_t"
   },
   {
     number: "04",
     abbreviation: "SALES",
     name: "Sales",
-    description: "For sales professionals and people working across business development and revenue."
+    description: "For sales professionals and people working across business development and revenue.",
+    link: "https://chat.whatsapp.com/L6LbfwH0xldJFqYShwoIFq?mode=gi_t"
   },
   {
     number: "05",
     abbreviation: "DESIGN",
     name: "Design",
-    description: "For people working across UI, UX, product and visual design."
+    description: "For people working across UI, UX, product and visual design.",
+    link: "https://chat.whatsapp.com/IrfyrCjkgz3Ekl72mxcMpM?mode=gi_t"
   },
   {
     number: "06",
     abbreviation: "FREELANCE",
     name: "Freelance",
-    description: "For independent professionals sharing opportunities, knowledge and experiences."
+    description: "For independent professionals sharing opportunities, knowledge and experiences.",
+    link: "https://chat.whatsapp.com/HFxuW4xFd9B9kl2OdMXraC?mode=gi_t"
   },
   {
     number: "07",
     abbreviation: "FOUNDERS",
     name: "Founders",
-    description: "For founders building companies, products and lasting businesses."
+    description: "For founders building companies, products and lasting businesses.",
+    link: "https://chat.whatsapp.com/KE9zPqyXdK6FiJQTZULpdc?mode=gi_t"
   }
 ];
 
@@ -54,17 +61,17 @@ function renderCommunities() {
   if (!grid) return;
 
   grid.innerHTML = communities.map((community) => `
-    <article class="community-item" tabindex="0" aria-label="${community.name} community" data-community="${community.abbreviation}">
+    <a class="community-item" href="${community.link}" target="_blank" rel="noopener noreferrer" aria-label="Join ${community.name} community" data-community="${community.abbreviation}">
       <div class="community-top">
         <span class="community-number">${community.number}</span>
         <span class="community-abbrev">${community.abbreviation}</span>
       </div>
       <h3 class="community-name">${community.name}</h3>
       <p class="community-desc">${community.description}</p>
-      <button class="btn-join" onclick="handleJoinCommunity('${community.name}')" aria-label="Join ${community.name} community">
+      <span class="btn-join" aria-hidden="true">
         Join Community <span class="arrow">→</span>
-      </button>
-    </article>
+      </span>
+    </a>
   `).join('');
 }
 
@@ -241,25 +248,10 @@ function initializeGrain() {
   });
 }
 
-/* ---- Keyboard Navigation ---- */
-function initializeKeyboard() {
-  document.addEventListener('keydown', (e) => {
-    // Allow Enter to trigger join on focused community items
-    if (e.key === 'Enter') {
-      const focused = document.activeElement;
-      if (focused && focused.classList.contains('community-item')) {
-        const name = focused.querySelector('.community-name')?.textContent;
-        if (name) handleJoinCommunity(name);
-      }
-    }
-  });
-}
-
 /* ---- Initialize ---- */
 document.addEventListener('DOMContentLoaded', () => {
   renderCommunities();
   initializeCommunityCarousel();
   initializeMenu();
   initializeGrain();
-  initializeKeyboard();
 });

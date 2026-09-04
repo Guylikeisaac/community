@@ -494,6 +494,11 @@ body {
   border-color: var(--border-hover);
 }
 
+.community-item:focus-visible {
+  outline: 1px solid var(--white);
+  outline-offset: 4px;
+}
+
 .community-top {
   display: flex;
   align-items: baseline;
