@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="SyncUp Communities — Professional communities for people working in Talent Acquisition, Software Development, Data, Sales, Design, Freelance, and Founders. Find your field, join your community.">
+  <meta name="theme-color" content="#080808">
+  <title>SyncUp — Professional Communities</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css?v=9">
+</head>
+<body>
+
+  <div class="app">
+
+    <!-- ===== GRAIN OVERLAY ===== -->
+    <canvas id="grain-canvas" class="grain-overlay" aria-hidden="true"></canvas>
+
+    <!-- ===== HALFTONE BACKGROUND ===== -->
+    <div class="halftone-bg" aria-hidden="true"></div>
+
+    <!-- ===== HEADER ===== -->
+    <header class="header" role="banner">
+      <div class="header-logo">
+        <svg class="logo-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="SyncUp logo">
+          <path d="M50 5 L90 80 C90 80 74 68 50 68 C26 68 10 80 10 80 L50 5Z" fill="#F5F5F0"/>
+        </svg>
+        <span class="logo-text">SyncUp</span>
+      </div>
+      <div class="header-right">
+        <span class="nav-label">Communities</span>
+        <span class="nav-year">2026</span>
+        <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Open menu" aria-expanded="false">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </header>
+
+    <!-- ===== MOBILE MENU OVERLAY ===== -->
+    <nav class="mobile-menu-overlay" id="mobile-menu-overlay" role="navigation" aria-label="Mobile navigation">
+      <a href="#" onclick="handleExplore(); return false;">Communities</a>
+      <a href="#" onclick="showToast('About SyncUp — coming soon.'); return false;">About</a>
+    </nav>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main-content" role="main">
+
+      <!-- ===== HERO ===== -->
+      <section class="hero" aria-labelledby="hero-headline">
+        <div class="hero-image-wrapper" aria-hidden="true">
+          <img src="hero.png" alt="" loading="eager">
+        </div>
+        <div class="halftone-decoration" aria-hidden="true"></div>
+        <div class="hero-inner">
+          <span class="eyebrow animate-in">SyncUp / Communities</span>
+          <h1 id="hero-headline" class="hero-headline animate-in">
+            Your career<br>has a <em>community.</em>
+          </h1>
+          <p class="hero-description animate-in">
+            Find people working in your field, share opportunities and build your network.
+          </p>
+          <div class="hero-cta-area animate-in">
+            <button class="btn-explore" onclick="handleExplore()" aria-label="Explore communities">
+              Explore Communities <span class="arrow">→</span>
+            </button>
+          </div>
+          <span class="hero-meta animate-in">07 Communities / One Place</span>
+        </div>
+      </section>
+
+      <!-- ===== COMMUNITY DIRECTORY ===== -->
+      <section class="directory" aria-labelledby="dir-label">
+        <div class="directory-header">
+          <span class="dir-label" id="dir-label">Community Directory</span>
+          <span class="dir-count">07 Fields</span>
+        </div>
+        <div class="community-grid" id="community-grid" role="list" aria-label="Community carousel">
+          <!-- Rendered by JavaScript -->
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ===== FOOTER METADATA ===== -->
+    <footer class="footer-meta" role="contentinfo">
+      <span>SyncUp / Communities</span>
+      <span>07 Fields / 2026</span>
+    </footer>
+
+    <!-- ===== TOAST NOTIFICATION ===== -->
+    <div class="toast" id="toast" role="alert" aria-live="polite">
+      <span class="toast-dot" aria-hidden="true"></span>
+      <span class="toast-message"></span>
+    </div>
+
+  </div>
+
+  <script src="script.js?v=6"></script>
+</body>
+</html>
