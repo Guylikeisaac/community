@@ -61,7 +61,7 @@ function renderCommunities() {
   if (!grid) return;
 
   grid.innerHTML = communities.map((community) => `
-    <a class="community-item" href="${community.link}" target="_blank" rel="noopener noreferrer" aria-label="Join ${community.name} community" data-community="${community.abbreviation}">
+    <a class="community-item" href="community.html?community=${encodeURIComponent(community.abbreviation)}&join=${encodeURIComponent(community.link)}" aria-label="View ${community.name} community details" data-community="${community.abbreviation}">
       <div class="community-top">
         <span class="community-number">${community.number}</span>
         <span class="community-abbrev">${community.abbreviation}</span>
@@ -73,59 +73,6 @@ function renderCommunities() {
       </span>
     </a>
   `).join('');
-}
-
-/* ---- 3D Community Carousel ---- */
-function initializeCommunityCarousel() {
-  const carousel = document.getElementById('community-grid');
-  if (!carousel) return;
-
-  const items = [...carousel.querySelectorAll('.community-item')];
-  if (!items.length) return;
-
-  let rotation = 0;
-  let lastTimestamp = 0;
-  let isPaused = false;
-
-  function positionItems(timestamp) {
-    if (!lastTimestamp) lastTimestamp = timestamp;
-    const elapsed = timestamp - lastTimestamp;
-    lastTimestamp = timestamp;
-
-    if (!isPaused) rotation += elapsed * 0.018;
-
-    const radiusX = Math.min(carousel.clientWidth * 0.30, 260);
-    const radiusY = Math.min(carousel.clientHeight * 0.24, 190);
-    const depthRadius = Math.min(carousel.clientWidth * 0.22, 220);
-    const baseSize = Math.min(Math.max(carousel.clientWidth * 0.22, 190), 280);
-    const angleStep = 360 / items.length;
-
-    items.forEach((item, index) => {
-      const angle = index * angleStep + rotation;
-      const radians = angle * Math.PI / 180;
-      const depth = Math.cos(radians);
-      const x = Math.sin(radians) * radiusX;
-      const y = Math.cos(radians) * radiusY;
-      const scale = 0.72 + ((depth + 1) / 2) * 0.28;
-      const size = baseSize * scale;
-
-      item.style.width = `${size}px`;
-      item.style.height = `${size}px`;
-      item.style.left = `${carousel.clientWidth / 2 + x - size / 2}px`;
-      item.style.top = `${carousel.clientHeight / 2 + y - size / 2}px`;
-      item.style.zIndex = Math.round((depth + 1) * 100);
-      item.style.opacity = `${0.58 + ((depth + 1) / 2) * 0.42}`;
-    });
-
-    requestAnimationFrame(positionItems);
-  }
-
-  carousel.addEventListener('mouseenter', () => { isPaused = true; });
-  carousel.addEventListener('mouseleave', () => { isPaused = false; });
-  carousel.addEventListener('focusin', () => { isPaused = true; });
-  carousel.addEventListener('focusout', () => { isPaused = false; });
-  positionItems(0);
-  requestAnimationFrame(positionItems);
 }
 
 /* ---- Toast Notification ---- */
@@ -251,7 +198,6 @@ function initializeGrain() {
 /* ---- Initialize ---- */
 document.addEventListener('DOMContentLoaded', () => {
   renderCommunities();
-  initializeCommunityCarousel();
   initializeMenu();
   initializeGrain();
 });

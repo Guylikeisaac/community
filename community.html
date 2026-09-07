@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Join a focused SyncUp professional community.">
+  <meta name="theme-color" content="#080808">
+  <title>SyncUp — Community Details</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=10">
+</head>
+<body class="detail-page">
+  <div class="app">
+    <canvas id="grain-canvas" class="grain-overlay" aria-hidden="true"></canvas>
+    <div class="halftone-bg" aria-hidden="true"></div>
+
+    <header class="header" role="banner">
+      <a class="header-logo" href="index.html" aria-label="Back to SyncUp communities">
+        <svg class="logo-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M50 5 L90 80 C90 80 74 68 50 68 C26 68 10 80 10 80 L50 5Z" fill="#F5F5F0"/>
+        </svg>
+        <span class="logo-text">SyncUp</span>
+      </a>
+      <a class="detail-back" href="index.html">← Communities</a>
+    </header>
+
+    <main class="detail-content" role="main">
+      <section class="detail-intro" aria-labelledby="community-title">
+        <span class="eyebrow">SyncUp / Community Guide</span>
+        <p class="detail-number" id="community-number">Community</p>
+        <h1 id="community-title">Your community.</h1>
+        <p class="detail-lead">Real conversations, useful opportunities and people who understand the work.</p>
+        <a class="btn-detail-join btn-detail-join--intro join-link" href="#" target="_blank" rel="noopener noreferrer">Join the community <span class="arrow">→</span></a>
+      </section>
+
+      <section class="rules-panel" aria-labelledby="rules-title">
+        <div class="rules-heading">
+          <span class="dir-label">Before you join</span>
+          <span class="dir-count">Keep it real</span>
+        </div>
+        <h2 id="rules-title">A focused space for connection.</h2>
+        <div class="rules-list">
+          <article class="rule-item">
+            <span class="rule-number">01</span>
+            <div><h3>How to join</h3><p>Tap the button below and introduce yourself with your name, role and what you are hoping to connect around.</p></div>
+          </article>
+          <article class="rule-item">
+            <span class="rule-number">02</span>
+            <div><h3>What to talk about</h3><p>Share thoughtful questions, relevant job opportunities, projects, learning and conversations that help the community.</p></div>
+          </article>
+          <article class="rule-item">
+            <span class="rule-number">03</span>
+            <div><h3>Connection over promotion</h3><p>This group is only for genuine connection. No spam, hard selling, promotional messages or unsolicited links.</p></div>
+          </article>
+        </div>
+        <p class="detail-note">We are building SyncUp together. If something feels like noise, flag it and help keep the space useful.</p>
+        <a class="btn-detail-join btn-detail-join--bottom join-link" href="#" target="_blank" rel="noopener noreferrer">Join the community <span class="arrow">→</span></a>
+      </section>
+    </main>
+
+    <footer class="footer-meta" role="contentinfo">
+      <span>SyncUp / Communities</span>
+      <span>One rule / Keep it real</span>
+    </footer>
+  </div>
+
+  <script>
+    const communityNames = {
+      TA: 'Talent Acquisition',
+      SDE: 'Software Development',
+      DATA: 'Data',
+      SALES: 'Sales',
+      DESIGN: 'Design',
+      FREELANCE: 'Freelance',
+      FOUNDERS: 'Founders'
+    };
+    const params = new URLSearchParams(window.location.search);
+    const community = params.get('community') || '';
+    const name = communityNames[community] || 'SyncUp';
+    document.title = `SyncUp — ${name}`;
+    document.getElementById('community-number').textContent = `${community || '07'} / Community`;
+    document.getElementById('community-title').textContent = `${name} community.`;
+    document.querySelectorAll('.join-link').forEach(link => {
+      link.href = params.get('join') || 'index.html';
+    });
+  </script>
+</body>
+</html>
