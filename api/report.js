@@ -12,6 +12,14 @@ function json(response, status = 200) {
   });
 }
 
+function getHeader(request, name) {
+  if (typeof request.headers?.get === 'function') {
+    return request.headers.get(name);
+  }
+
+  return request.headers?.[name] || request.headers?.[name.toLowerCase()];
+}
+
 async function sendTelegram(text) {
   const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
     method: 'POST',
@@ -23,7 +31,7 @@ async function sendTelegram(text) {
 }
 
 export default async function handler(request) {
-  const authorization = request.headers.get('authorization');
+  const authorization = getHeader(request, 'authorization');
   if (CRON_SECRET && authorization !== `Bearer ${CRON_SECRET}`) {
     return json({ error: 'Unauthorized' }, 401);
   }
