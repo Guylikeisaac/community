@@ -78,12 +78,25 @@
     };
     const params = new URLSearchParams(window.location.search);
     const community = params.get('community') || '';
+    const source = params.get('source') || '';
     const name = communityNames[community] || 'SyncUp';
     document.title = `SyncUp — ${name}`;
     document.getElementById('community-number').textContent = `${community || '07'} / Community`;
     document.getElementById('community-title').textContent = `${name} community.`;
     document.querySelectorAll('.join-link').forEach(link => {
       link.href = params.get('join') || 'index.html';
+      link.addEventListener('click', () => {
+        if (!community || !source) return;
+        const payload = JSON.stringify({
+          event_type: 'join_click',
+          community,
+          source_group: source
+        });
+        navigator.sendBeacon(
+          '/api/track',
+          new Blob([payload], { type: 'application/json' })
+        );
+      });
     });
   </script>
 </body>

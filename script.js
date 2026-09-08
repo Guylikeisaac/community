@@ -106,7 +106,7 @@ function renderCommunities() {
   if (!grid) return;
 
   grid.innerHTML = communities.map((community) => `
-    <a class="community-item" href="community.html?community=${encodeURIComponent(community.abbreviation)}&join=${encodeURIComponent(community.link)}" aria-label="View ${community.name} community details" data-community="${community.abbreviation}">
+    <a class="community-item" href="community.html?community=${encodeURIComponent(community.abbreviation)}&source=${encodeURIComponent(getSourceGroup())}&join=${encodeURIComponent(community.link)}" aria-label="View ${community.name} community details" data-community="${community.abbreviation}">
       <div class="community-top">
         <span class="community-number">${community.number}</span>
         <span class="community-abbrev">${community.abbreviation}</span>
@@ -119,11 +119,6 @@ function renderCommunities() {
     </a>
   `).join('');
 
-  grid.querySelectorAll('.community-item').forEach((item) => {
-    item.addEventListener('click', () => {
-      trackEvent('join_click', item.dataset.community);
-    });
-  });
 }
 
 /* ---- Toast Notification ---- */
