@@ -13,7 +13,11 @@ export default async function handler(request, response) {
 
   let body;
   try {
-    body = await request.json();
+    body = request.body;
+
+if (!body && typeof request.json === 'function') {
+  body = await request.json();
+}
   } catch {
     return json(response, { error: 'Invalid JSON' }, 400);
   }
