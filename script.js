@@ -55,6 +55,51 @@ const communities = [
   }
 ];
 
+const trackingConfig = {
+  endpoint: '/api/track',
+  fallbackSource: 'DIRECT'
+};
+
+function getSourceGroup() {
+  const source = new URLSearchParams(window.location.search).get('source');
+  if (!source) return trackingConfig.fallbackSource;
+
+  const normalizedSource = source.trim().toUpperCase();
+  return communities.some((community) => community.abbreviation === normalizedSource)
+    ? normalizedSource
+    : trackingConfig.fallbackSource;
+}
+
+function trackEvent(eventType, community, sourceGroup = getSourceGroup()) {
+  const payload = JSON.stringify({
+    event_type: eventType,
+    community,
+    source_group: sourceGroup
+  });
+
+  if (navigator.sendBeacon) {
+    navigator.sendBeacon(
+      trackingConfig.endpoint,
+      new Blob([payload], { type: 'application/json' })
+    );
+    return;
+  }
+
+  fetch(trackingConfig.endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: payload,
+    keepalive: true
+  }).catch(() => {});
+}
+
+function initializeTracking() {
+  const sourceGroup = getSourceGroup();
+  if (sourceGroup !== trackingConfig.fallbackSource) {
+    trackEvent('website_visit', sourceGroup, sourceGroup);
+  }
+}
+
 /* ---- Render Communities ---- */
 function renderCommunities() {
   const grid = document.getElementById('community-grid');
@@ -73,6 +118,12 @@ function renderCommunities() {
       </span>
     </a>
   `).join('');
+
+  grid.querySelectorAll('.community-item').forEach((item) => {
+    item.addEventListener('click', () => {
+      trackEvent('join_click', item.dataset.community);
+    });
+  });
 }
 
 /* ---- Toast Notification ---- */
@@ -198,6 +249,7 @@ function initializeGrain() {
 /* ---- Initialize ---- */
 document.addEventListener('DOMContentLoaded', () => {
   renderCommunities();
+  initializeTracking();
   initializeMenu();
   initializeGrain();
 });
