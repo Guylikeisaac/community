@@ -21,11 +21,15 @@ function getHeader(request, name) {
 }
 
 async function sendTelegram(text) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 8000);
   const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text })
+    body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text }),
+    signal: controller.signal
   });
+  clearTimeout(timeout);
 
   if (!response.ok) throw new Error('Telegram message failed');
 }
@@ -53,15 +57,17 @@ export default async function handler(request) {
   if (!response.ok) return json({ error: 'Could not read report data' }, 502);
   const report = await response.json();
 
+  const messages = [];
   for (const eventType of ['website_visit', 'join_click']) {
     for (const community of COMMUNITIES) {
       const row = report.find((item) => item.event_type === eventType && item.community === community);
       const label = eventType === 'website_visit' ? 'Website visits' : 'Join Community clicks';
       const latest = row?.latest_count || 0;
       const total = row?.total_count || 0;
-      await sendTelegram(`${community} Community\n\n${label} in the last 5 minutes: ${latest}\nTotal ${label.toLowerCase()}: ${total}`);
+      messages.push(sendTelegram(`${community} Community\n\n${label} in the last 12 hours: ${latest}\nTotal ${label.toLowerCase()}: ${total}`));
     }
   }
+  await Promise.all(messages);
 
   return json({ ok: true, messages: COMMUNITIES.length * 2 });
 }

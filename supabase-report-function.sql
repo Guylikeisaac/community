@@ -12,7 +12,7 @@ as $$
   select
     e.event_type,
     e.community,
-    count(*) filter (where e.created_at >= now() - interval '5 minutes') as latest_count,
+    count(*) filter (where e.created_at >= now() - interval '12 hours') as latest_count,
     count(*) as total_count
   from public.click_events e
   group by e.event_type, e.community;
