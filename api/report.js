@@ -5,11 +5,8 @@ const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 const CRON_SECRET = process.env.CRON_SECRET;
 const COMMUNITIES = ['TA', 'SDE', 'DATA', 'SALES', 'DESIGN', 'FREELANCE', 'FOUNDERS'];
 
-function json(response, status = 200) {
-  return new Response(JSON.stringify(response), {
-    status,
-    headers: { 'Content-Type': 'application/json' }
-  });
+function json(response, body, status = 200) {
+  response.status(status).json(body);
 }
 
 function getHeader(request, name) {
@@ -34,17 +31,17 @@ async function sendTelegram(text) {
   if (!response.ok) throw new Error('Telegram message failed');
 }
 
-export default async function handler(request) {
+export default async function handler(request, response) {
   const authorization = getHeader(request, 'authorization');
   if (CRON_SECRET && authorization !== `Bearer ${CRON_SECRET}`) {
-    return json({ error: 'Unauthorized' }, 401);
+    return json(response, { error: 'Unauthorized' }, 401);
   }
 
   if (!SUPABASE_ANON_KEY || !TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
-    return json({ error: 'Reporting is not configured' }, 500);
+    return json(response, { error: 'Reporting is not configured' }, 500);
   }
 
-  const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_click_report`, {
+  const supabaseResponse = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_click_report`, {
     method: 'POST',
     headers: {
       apikey: SUPABASE_ANON_KEY,
@@ -54,8 +51,8 @@ export default async function handler(request) {
     body: '{}'
   });
 
-  if (!response.ok) return json({ error: 'Could not read report data' }, 502);
-  const report = await response.json();
+  if (!supabaseResponse.ok) return json(response, { error: 'Could not read report data' }, 502);
+  const report = await supabaseResponse.json();
 
   const messages = ['Website visits in the last 12 hours', 'Join Community clicks in the last 12 hours'];
   const eventTypes = ['website_visit', 'join_click'];
@@ -70,5 +67,5 @@ export default async function handler(request) {
     return sendTelegram(`${heading}\n\n${lines.join('\n\n')}`);
   }));
 
-  return json({ ok: true, messages: 2 });
+  return json(response, { ok: true, messages: 2 });
 }
