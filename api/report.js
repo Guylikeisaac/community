@@ -57,17 +57,18 @@ export default async function handler(request) {
   if (!response.ok) return json({ error: 'Could not read report data' }, 502);
   const report = await response.json();
 
-  const messages = [];
-  for (const eventType of ['website_visit', 'join_click']) {
-    for (const community of COMMUNITIES) {
-      const row = report.find((item) => item.event_type === eventType && item.community === community);
-      const label = eventType === 'website_visit' ? 'Website visits' : 'Join Community clicks';
-      const latest = row?.latest_count || 0;
-      const total = row?.total_count || 0;
-      messages.push(sendTelegram(`${community} Community\n\n${label} in the last 12 hours: ${latest}\nTotal ${label.toLowerCase()}: ${total}`));
-    }
-  }
-  await Promise.all(messages);
+  const messages = ['Website visits in the last 12 hours', 'Join Community clicks in the last 12 hours'];
+  const eventTypes = ['website_visit', 'join_click'];
 
-  return json({ ok: true, messages: COMMUNITIES.length * 2 });
+  await Promise.all(messages.map((heading, index) => {
+    const lines = COMMUNITIES.map((community) => {
+      const row = report.find((item) => item.event_type === eventTypes[index] && item.community === community);
+      const totalLabel = index === 0 ? 'website visits' : 'Join Community clicks';
+      return `${community} Community\nLatest: ${row?.latest_count || 0}\nTotal ${totalLabel}: ${row?.total_count || 0}`;
+    });
+
+    return sendTelegram(`${heading}\n\n${lines.join('\n\n')}`);
+  }));
+
+  return json({ ok: true, messages: 2 });
 }
