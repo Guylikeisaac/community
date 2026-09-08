@@ -83,20 +83,13 @@
     document.title = `SyncUp — ${name}`;
     document.getElementById('community-number').textContent = `${community || '07'} / Community`;
     document.getElementById('community-title').textContent = `${name} community.`;
+    // Route every Join click through /api/join so the click is recorded
+    // server-side during the redirect. This works in every browser, including
+    // the WhatsApp in-app browser where navigator.sendBeacon is unreliable.
     document.querySelectorAll('.join-link').forEach(link => {
-      link.href = params.get('join') || 'index.html';
-      link.addEventListener('click', () => {
-        if (!community || !source) return;
-        const payload = JSON.stringify({
-          event_type: 'join_click',
-          community,
-          source_group: source
-        });
-        navigator.sendBeacon(
-          '/api/track',
-          new Blob([payload], { type: 'application/json' })
-        );
-      });
+      link.href = community
+        ? `/api/join?community=${encodeURIComponent(community)}&source=${encodeURIComponent(source || 'DIRECT')}`
+        : (params.get('join') || 'index.html');
     });
   </script>
 </body>

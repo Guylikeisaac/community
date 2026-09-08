@@ -7,23 +7,32 @@ function json(response, body, status = 200) {
   response.status(status).json(body);
 }
 
+// Vercel's Node runtime may hand us the body as a parsed object, a raw string,
+// or a Buffer (common with navigator.sendBeacon and in-app browsers). Normalise
+// all of those to an object instead of throwing / rejecting valid events.
+function parseBody(raw) {
+  let body = raw;
+  if (Buffer.isBuffer(body)) body = body.toString('utf8');
+  if (typeof body === 'string') {
+    const text = body.trim();
+    if (!text) return {};
+    try {
+      body = JSON.parse(text);
+    } catch {
+      return {};
+    }
+  }
+  return body && typeof body === 'object' ? body : {};
+}
+
 export default async function handler(request, response) {
   if (request.method !== 'POST') return json(response, { error: 'Method not allowed' }, 405);
   if (!SUPABASE_ANON_KEY) return json(response, { error: 'Tracking is not configured' }, 500);
 
-  let body;
-  try {
-    body = request.body;
-
-if (!body && typeof request.json === 'function') {
-  body = await request.json();
-}
-  } catch {
-    return json(response, { error: 'Invalid JSON' }, 400);
-  }
+  const body = parseBody(request.body);
 
   const eventType = String(body.event_type || '');
-  const community = String(body.community || '');
+  const community = String(body.community || '').toUpperCase();
   const sourceGroup = String(body.source_group || 'DIRECT').slice(0, 32).toUpperCase();
 
   if (!ALLOWED_EVENTS.has(eventType) || !ALLOWED_COMMUNITIES.has(community)) {

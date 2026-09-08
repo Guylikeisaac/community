@@ -57,7 +57,7 @@ export default async function handler(request, response) {
   const messages = ['Website visits in the last 12 hours', 'Join Community clicks in the last 12 hours'];
   const eventTypes = ['website_visit', 'join_click'];
 
-  await Promise.all(messages.map((heading, index) => {
+  const results = await Promise.allSettled(messages.map((heading, index) => {
     const lines = COMMUNITIES.map((community) => {
       const row = report.find((item) => item.event_type === eventTypes[index] && item.community === community);
       const totalLabel = index === 0 ? 'website visits' : 'Join Community clicks';
@@ -67,5 +67,7 @@ export default async function handler(request, response) {
     return sendTelegram(`${heading}\n\n${lines.join('\n\n')}`);
   }));
 
-  return json(response, { ok: true, messages: 2 });
+  const sent = results.filter((result) => result.status === 'fulfilled').length;
+  if (sent === 0) return json(response, { error: 'Telegram send failed' }, 502);
+  return json(response, { ok: true, messages: sent });
 }
